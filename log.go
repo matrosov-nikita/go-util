@@ -13,3 +13,11 @@ var Log = &logrus.Logger{
 	Out:       os.Stdout,
 	Formatter: &logrus.JSONFormatter{TimestampFormat: LogTimestampFormat},
 }
+
+func LogWithError(log logrus.FieldLogger, err error, msg string) {
+	if err != nil {
+		log.WithError(err).Error(msg)
+		return
+	}
+	log.Debug(msg)
+}
