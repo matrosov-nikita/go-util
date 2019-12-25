@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/facebookgo/stack"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
 	"time"
@@ -33,7 +34,7 @@ func (rc *realClock) Since(t time.Time) time.Duration {
 // Middleware is a middleware handler that logs the request as it goes in and the response as it goes out.
 type Middleware struct {
 	// Logger is the log.Logger instance used to log messages with the Logger middleware
-	Logger FieldLogger
+	Logger logrus.FieldLogger
 
 	logStarting bool
 
@@ -44,7 +45,7 @@ type Middleware struct {
 }
 
 // NewDefaultMiddleware returns a new *Middleware which writes to a given logrus addedLogs.
-func NewDefaultMiddleware(logger FieldLogger) func(handler http.Handler) http.Handler {
+func NewDefaultMiddleware(logger logrus.FieldLogger) func(handler http.Handler) http.Handler {
 	mw := &Middleware{
 		Logger: logger,
 
@@ -118,7 +119,7 @@ func (m *Middleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, next htt
 		remoteAddr = realIP
 	}
 
-	entry = entry.WithFields(Fields{
+	entry = entry.WithFields(logrus.Fields{
 		"request": r.RequestURI,
 		"method":  r.Method,
 		"remote":  remoteAddr,
@@ -135,7 +136,7 @@ func (m *Middleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, next htt
 		if err := recover(); err != nil {
 			frames := stack.Callers(3)
 
-			entry.WithFields(Fields{"stack": frames, "err": err}).Error("panic while serving request")
+			entry.WithFields(logrus.Fields{"stack": frames, "err": err}).Error("panic while serving request")
 
 			decorator.WriteHeader(http.StatusInternalServerError)
 			decorator.Header().Set(contentType, applicationJSONCharsetUTF8)
@@ -144,7 +145,7 @@ func (m *Middleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, next htt
 		}
 
 		latency := m.clock.Since(start)
-		entry.WithFields(Fields{
+		entry.WithFields(logrus.Fields{
 			"status": decorator.StatusCode,
 			"took":   latency,
 		}).Debug("completed handling request")
