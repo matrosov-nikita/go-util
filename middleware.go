@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-type key string
-
 type timer interface {
 	Now() time.Time
 	Since(time.Time) time.Duration
@@ -109,7 +107,7 @@ func (m *Middleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, next htt
 
 	ctx := context.WithValue(r.Context(), m.requestIDContextKey, reqID)
 	r = r.WithContext(ctx)
-	entry = entry.WithField("request_id", reqID)
+	entry = entry.WithField("xRequestId", reqID)
 
 	// Try to get the real IP
 	remoteAddr := r.RemoteAddr
