@@ -12,10 +12,6 @@ import (
 
 type key string
 
-const (
-	RequestIDContextKey key = "requestID"
-)
-
 type timer interface {
 	Now() time.Time
 	Since(time.Time) time.Duration
@@ -36,6 +32,8 @@ type Middleware struct {
 	// Logger is the log.Logger instance used to log messages with the Logger middleware
 	Logger logrus.FieldLogger
 
+	requestIDContextKey string
+
 	logStarting bool
 
 	clock timer
@@ -45,12 +43,12 @@ type Middleware struct {
 }
 
 // NewDefaultMiddleware returns a new *Middleware which writes to a given logrus addedLogs.
-func NewDefaultMiddleware(logger logrus.FieldLogger) func(handler http.Handler) http.Handler {
+func NewDefaultMiddleware(logger logrus.FieldLogger, requestIDContextKey string) func(handler http.Handler) http.Handler {
 	mw := &Middleware{
-		Logger: logger,
-
-		logStarting: true,
-		clock:       &realClock{},
+		Logger:              logger,
+		requestIDContextKey: requestIDContextKey,
+		logStarting:         true,
+		clock:               &realClock{},
 	}
 
 	return func(next http.Handler) http.Handler {
@@ -109,7 +107,7 @@ func (m *Middleware) ServeHTTP(rw http.ResponseWriter, r *http.Request, next htt
 		reqID = RandomID()
 	}
 
-	ctx := context.WithValue(r.Context(), RequestIDContextKey, reqID)
+	ctx := context.WithValue(r.Context(), m.requestIDContextKey, reqID)
 	r = r.WithContext(ctx)
 	entry = entry.WithField("request_id", reqID)
 
