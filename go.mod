@@ -1,4 +1,4 @@
-module bitbucket.org/Axxonsoft/go-util
+module github.com/itimofeev/go-util
 
 go 1.13
 
