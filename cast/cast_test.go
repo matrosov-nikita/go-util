@@ -167,11 +167,8 @@ func Test_TryUInt32(t *testing.T) {
 	// UInt32 no error cases from string
 	testTryUInt32(t, "0", "1", "4294967295")
 
-	// UInt32 error cases from int
-	testTryUInt32Err(t, -1, 4294967296)
-
 	// UInt32 no error cases from int
-	testTryUInt32(t, 0, 1, 1024, 4294967295)
+	testTryUInt32(t, 0, 1, 1024, math.MaxInt32)
 
 	// UInt32 error cases from int64
 	testTryUInt32Err(t, int64(-1), int64(math.MaxInt64))
@@ -440,9 +437,6 @@ func Test_TryInt32(t *testing.T) {
 
 	// Int32 no error cases from string
 	testTryInt32(t, "-2147483648", "0", "1", "2147483647")
-
-	// Int32 error cases from int
-	testTryInt32Err(t, -2147483649, 4294967296)
 
 	// Int32 no error cases from int
 	testTryInt32(t, -2147483648, 0, 1, 1024, 2147483647)

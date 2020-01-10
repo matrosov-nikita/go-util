@@ -170,7 +170,7 @@ func TryUInt32(value interface{}) (uint32, error) {
 		}
 		return uint32(v), nil
 	case int:
-		if castedVal < 0 || castedVal > math.MaxUint32 {
+		if castedVal < 0 || uint64(castedVal) > math.MaxUint32 {
 			return 0, errNumericOverFlow
 		}
 		return uint32(castedVal), nil
