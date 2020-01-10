@@ -347,12 +347,9 @@ func TryInt8(value interface{}) (int8, error) {
 		}
 		return int8(castedVal), nil
 	case string:
-		v, err := strconv.ParseInt(castedVal, 0, 0)
+		v, err := strconv.ParseInt(castedVal, 0, 8)
 		if err != nil {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to int8", value, value)
-		}
-		if v < math.MinInt8 || v > math.MaxInt8 {
-			return 0, errNumericOverFlow
 		}
 		return int8(v), nil
 	default:
@@ -416,12 +413,9 @@ func TryInt16(value interface{}) (int16, error) {
 		}
 		return int16(castedVal), nil
 	case string:
-		v, err := strconv.ParseInt(castedVal, 0, 0)
+		v, err := strconv.ParseInt(castedVal, 0, 16)
 		if err != nil {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to int16", value, value)
-		}
-		if v < math.MinInt16 || v > math.MaxInt16 {
-			return 0, errNumericOverFlow
 		}
 		return int16(v), nil
 	default:
@@ -479,12 +473,9 @@ func TryInt32(value interface{}) (int32, error) {
 		}
 		return int32(castedVal), nil
 	case string:
-		v, err := strconv.ParseInt(castedVal, 0, 0)
+		v, err := strconv.ParseInt(castedVal, 0, 32)
 		if err != nil {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to int32", value, value)
-		}
-		if v < math.MinInt32 || v > math.MaxInt32 {
-			return 0, errNumericOverFlow
 		}
 		return int32(v), nil
 	default:
@@ -527,13 +518,9 @@ func TryInt64(value interface{}) (int64, error) {
 	case float32:
 		return int64(castedVal), nil
 	case string:
-		v, err := strconv.ParseInt(castedVal, 0, 0)
+		v, err := strconv.ParseInt(castedVal, 0, 64)
 		if err != nil {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to int64", value, value)
-		}
-		//nolint:staticcheck
-		if v < math.MinInt64 || v > math.MaxInt64 {
-			return 0, errNumericOverFlow
 		}
 		return v, nil
 	default:
