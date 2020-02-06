@@ -3,6 +3,7 @@ package util
 import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"log"
 	"net/http"
 )
 
@@ -31,4 +32,18 @@ func ConvertErrorToResponder(err error) middleware.Responder {
 		return httpError
 	}
 	return NewError(http.StatusInternalServerError, err.Error())
+}
+
+// CheckErr check error is nil and if not panic with message
+func CheckErr(err error, msg ...string) {
+	if err != nil {
+		log.Panicln(msg, err)
+	}
+}
+
+// CheckOk check that ok and if not panic with message
+func CheckOk(ok bool, msg ...string) {
+	if !ok {
+		log.Panicln(msg)
+	}
 }
