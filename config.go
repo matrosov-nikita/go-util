@@ -9,8 +9,11 @@ import (
 
 //InitEnvironmentIfNeeded set env variables listed in file
 func InitEnvironmentIfNeeded(flagName string) error {
-	pathToEnv := flag.String(flagName, "", "Path to file with env values")
-	flag.Parse()
+	flagSet := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	pathToEnv := flagSet.String(flagName, "", "Path to file with env values")
+	if err := flagSet.Parse(os.Args[1:]); err != nil {
+		return nil
+	}
 
 	if len(*pathToEnv) == 0 {
 		return nil
