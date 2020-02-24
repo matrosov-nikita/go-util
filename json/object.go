@@ -249,6 +249,37 @@ func (jo Object) OmitEmpty() Object {
 	return jo
 }
 
+func (jo Object) DeepOmitEmpty() Object {
+	if len(jo) == 0 {
+		return jo
+	}
+
+	cleanObj := make(map[string]interface{})
+	for key, val := range jo {
+		if val == nil {
+			continue
+		}
+
+		var castedVal Object
+		switch obj := val.(type) {
+		case Object:
+			castedVal = obj
+		case map[string]interface{}:
+			castedVal = obj
+		}
+
+		if castedVal == nil {
+			cleanObj[key] = val
+			continue
+		}
+
+		cleanObj[key] = castedVal.DeepOmitEmpty()
+	}
+
+	return cleanObj
+}
+
+
 func (jo Object) OmitKey(key ...string) Object {
 	for _, k := range key {
 		delete(jo, k)

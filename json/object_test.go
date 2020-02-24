@@ -30,6 +30,16 @@ func TestSplitFlatKey(t *testing.T) {
 	require.Equal(t, []string{"event", "detector", "listed_face_detected", "rectangle", "x"}, SplitFlatKey("event_detector_listed__face__detected_rectangle_x"))
 }
 
+func TestDeepOmitEmpty(t *testing.T) {
+	obj := Object{"a": 2, "e": nil, "b": map[string]interface{}{"c": 2, "d": nil}, "f": Object{"k": 1, "r": nil}}
+	cleanObjJSON, err := obj.DeepOmitEmpty().JSON()
+	require.NoError(t, err)
+	require.Equal(t, `{"a":2,"b":{"c":2},"f":{"k":1}}`, string(cleanObjJSON))
+
+	var emptyObj Object
+	require.Equal(t, emptyObj, emptyObj.DeepOmitEmpty())
+}
+
 func TestGetValueForField(t *testing.T) {
 	obj := Object{"test": 10}
 	require.Equal(t, int64(10), obj.GetFieldAsInt64("test"))
